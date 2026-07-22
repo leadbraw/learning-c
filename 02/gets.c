@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+// reads lines from console until EOF (ctrl+D in terminal) or newline, then echoes it back.
 int main(void) {
 	char line[128];
 	int n = 1;
