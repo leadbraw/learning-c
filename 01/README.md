@@ -1,0 +1,1 @@
+module 1: Understanding the compilation process (preprocess, assemble, compile, link). Built a simple hello world, then build a two-file program. One file sends a greetings to the console, the other file calls it. Made object files of the two, then linked them.
