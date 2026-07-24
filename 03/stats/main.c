@@ -3,21 +3,31 @@
 #include <string.h>
 #include "stats.h"
 
+#define CAPACITY 10000
+
 int main(int argc, char* argv[]) { 
 	int medianFlag = 0;
-	if (argc != 1 && argc > 2) {
-		printf("too many arguments. try again\n");
+	if (argc > 2) {
+		fprintf(stderr, "too many arguments. try again\n");
 		return 1;
 	} else if ((argc == 2) && strcmp(argv[1], "--median") == 0) {
 		medianFlag = 1;
+	} else if (argc == 2) {
+	    fprintf(stderr, "unknown argument, try again\n");
 	}
 
 	double arr[10000];
-	char buff[10000];
+	char buff[128];
 	int size = 0;
 
 	while (fgets(buff, sizeof buff, stdin) != NULL) {
-		double  n = strtol(buff, NULL, 10);   /* string to long, base 10 */
+	    char* endptr;
+		double n = strtod(buff, &endptr);
+		if (endptr == buff) continue; // nothing got parsed, skip line
+		if (size >= CAPACITY) {
+		    fprintf(stderr, "too many numbers, max is %d\n", CAPACITY);
+		    return 1;
+		}
 		arr[size++] = n;
 	}
 
