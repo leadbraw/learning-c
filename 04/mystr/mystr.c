@@ -1,7 +1,7 @@
 #include "mystr.h"
 
 
-void _swap(char *p1, char *p2) {
+static void swap(char *p1, char *p2) {
     char temp = *p1;
     *p1 = *p2;
     *p2 = temp;
@@ -31,11 +31,11 @@ char* my_strcpy(char* dst, const char* src) {
 }
 
 int my_strcmp(const char* a, const char* b) {
-    while ((*a == *b) && (*a) && (*b)) {
+    while ((*a == *b)) {
         a++;
         b++;
     }
-    return (unsigned char) (a - b);
+    return (unsigned char) *a - (unsigned char) *b;
 }
 
 char* my_strchr(const char* s, char c) {
@@ -55,18 +55,38 @@ char* my_strchr(const char* s, char c) {
 void my_strrev(char* s) {
     if (!*s) return;
     int n = my_strlen(s);
-    if (n == 1) return;
     char* l = s;
     char* r = &s[n - 1];
 
-    while (l != r) {
-        _swap(l, r);
+    while (l < r) {
+        swap(l, r);
+        r--;
+        l++;
     }
     return;
 }
 
-size_t my_split(char* s, char sep, char* parts[], size_t max_parts){
+size_t my_split(char* s, char sep, char* parts[], size_t max_parts) {
     /* it's like strtok() but better */
 
-    
+    char* start = s;
+    char* p = start;
+    size_t n = 0;
+    while (*p) {
+        if (*p == sep) {
+            if (n < max_parts) {
+                *p = '\0';
+                parts[n] = start;
+                n += 1;
+                start = p + 1;                
+            } else { break; }
+        }
+        p++;
+    }
+    if (n < max_parts) {
+        parts[n] = start;
+        n++;
+    }
+    return n;
 }
+

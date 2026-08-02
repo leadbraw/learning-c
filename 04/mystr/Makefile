@@ -9,7 +9,7 @@ main.o: main.c mystr.h
 	$(CC) $(CFLAGS) -c main.c
 
 mystr.o: mystr.c mystr.h
-	$(CC) $(CFLAGS) -c stats.c
+	$(CC) $(CFLAGS) -c mystr.c
 
 clean:
 	rm -f $(OBJS) mystr
