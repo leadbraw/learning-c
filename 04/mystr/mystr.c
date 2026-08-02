@@ -31,7 +31,7 @@ char* my_strcpy(char* dst, const char* src) {
 }
 
 int my_strcmp(const char* a, const char* b) {
-    while ((*a == *b)) {
+    while ((*a == *b) && *a) {
         a++;
         b++;
     }
