@@ -11,5 +11,7 @@ int vec_push(Vec* v, double x);
 double vec_get(const Vec* v, size_t i);
 size_t vec_len(const Vec* v);
 void vec_pop(Vec *v);
+void vec_insert(Vec* v, size_t i, double x);
+void vec_remove(Vec* v, size_t i);
 
 #endif
