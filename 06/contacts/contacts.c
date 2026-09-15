@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 struct Contacts {
     Contact* data;
@@ -13,7 +14,7 @@ struct Contacts {
 // utility function used by con_find()
 bool starts_with(const char *str, const char *pre) {
     while (*pre) {
-        if (*pre != *str) {
+        if (*str == '\0' || tolower((unsigned char) *str) != tolower((unsigned char) *pre)) {
             return false;
         }
         str++;
@@ -55,7 +56,8 @@ Contacts* con_new(void) {
 
 int con_push(Contacts* c, Contact* con) {
     if (c->len == c->cap) {
-        assert(con_grow(c) == 0);
+        int grow_res = con_grow(c);
+        assert(grow_res == 0);
     }
     c->data[c->len++] = *con; //idk if this assignment is right re: dereferencing
     return 0;
