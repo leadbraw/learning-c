@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include "contacts.h"
 
 // Stolen from module 04 mystr library hehe
@@ -66,23 +68,52 @@ static void execute_find(Contacts* c, char* args) {
     }
 }
 
-static void execute_list(Contacts* c) {
+static void execute_list(Contacts* c, bool to_file) {
     for (size_t i = 0; i < con_len(c); i++) {
         Contact* con = con_get(c, i);
-        printf("%zu: %s,%s,%d\n", i, con->name, con->email, con->age);
+        if (!to_file) {
+            printf("%zu: ", i);
+            printf("%s,%s,%d\n", con->name, con->email, con->age);
+        } else {
+            FILE *f = fopen("contacts.txt", "w");
+            if (f == NULL) { perror("contacts.txt"); }
+            fprintf(f, "%s,%s,%d\n", con->name, con->email, con->age);
+        }
+        
     }
 }
 
-static void execute_quit() {
-    
+static void execute_quit(Contacts* c) {
+    execute_list(c, true);
+    exit(0);
 }
 
 int main(void) {
-    char line[128];
-    printf("> ");
+    Contacts* c = con_new();
 
-    // READING FROM FILE/CONTACTS INIT GOES HERE!
+    char line[128];
+    FILE *f = fopen("contacts.txt", "a");
+    if (f == NULL) { perror("contacts.txt"); return 1; }
+    while (fgets(line, sizeof line, f) != NULL) {
+        char name[25];
+        char email[75];
+        int age;
+
+        line[strcspn(line, "\n")] = '\0'; //strip newline
+        if (sscanf(line, "%24[^,],%74[^,],%d", name, email, &age) != 3) {
+            fprintf(stderr, "Error parsing contacts.txt");
+            return 1;
+        }
+        Contact con;
+        strcpy(con.name, name);
+        strcpy(con.email, email);
+        con.age = age;
+        con_push(c, &con);
+    }
     
+    fclose(f);
+    
+    printf("> ");
     while (fgets(line, sizeof line, stdin) != NULL) {
         line[strcspn(line, "\n")] = '\0';
         char* split_result = strchr(line, ' ');
@@ -100,13 +131,13 @@ int main(void) {
         }
         // command is list or quit
         if (strcmp(line, "list") == 0) {
-            execute_list(c);
+            execute_list(c, false);
         } else if (strcmp(line, "quit") == 0) {
-            execute_quit();
+            execute_quit(c);
         } else {
             printf("Unrecognized command. Try again.\n");
         }
         printf("> ");
     }
-    execute_quit();
+    execute_quit(c);
 }
